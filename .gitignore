@@ -1,6 +1,10 @@
 node_modules
 .env
 .env.example
+.eslintignore
+.prettierignore
+.prettierrc
+.solhintignore
 coverage
 coverage.json
 typechain
@@ -8,4 +12,3 @@ typechain
 #Hardhat files
 cache
 artifacts
-.solhintignore
