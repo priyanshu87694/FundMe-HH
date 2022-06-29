@@ -5,24 +5,35 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 import "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
 
 contract FundMe {
 
     using PriceConverter for uint256;
 
     uint256 public constant MIN_USD = 50 * 1e18;
-
     address[] public funders;
     mapping(address => uint256) public addressToAmountFunded;
-
     address public immutable i_owner;
-
     AggregatorV3Interface public priceFeed;
+
+    modifier checkOwner {
+        // require(msg.sender == i_owner);
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
+        _;
+    }
 
     constructor (address priceFeedAddress) {
         i_owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
+    }
+
+    receive () external payable {
+        fund();
+    }
+
+    fallback () external payable {
+        fund();
     }
 
     function fund () public payable {
@@ -45,17 +56,5 @@ contract FundMe {
         require(success, "Failed");
     }
 
-    modifier checkOwner {
-        // require(msg.sender == i_owner);
-        if (msg.sender != i_owner) revert NotOwner();
-        _;
-    }
 
-    receive () external payable {
-        fund();
-    }
-
-    fallback () external payable {
-        fund();
-    }
 }
