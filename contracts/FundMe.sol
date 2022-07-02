@@ -21,7 +21,7 @@ contract FundMe {
     uint256 public constant MINIMUM_USD = 50 * 10**18;
     address private immutable i_owner;
     address[] private s_funders;
-    mapping(address => uint256) private addressToAmountFunded;
+    mapping(address => uint256) private s_addressToAmountFunded;
     AggregatorV3Interface private s_priceFeed;
 
     // Events (we have none!)
@@ -55,7 +55,7 @@ contract FundMe {
             "You need to spend more ETH!"
         );
         // require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
-        addressToAmountFunded[msg.sender] += msg.value;
+        s_addressToAmountFunded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
     }
 
@@ -66,7 +66,7 @@ contract FundMe {
             funderIndex++
         ) {
             address funder = s_funders[funderIndex];
-            addressToAmountFunded[funder] = 0;
+            s_addressToAmountFunded[funder] = 0;
         }
         s_funders = new address[](0);
         // Transfer vs call vs Send
@@ -84,7 +84,7 @@ contract FundMe {
             funderIndex++
         ) {
             address funder = funders[funderIndex];
-            addressToAmountFunded[funder] = 0;
+            s_addressToAmountFunded[funder] = 0;
         }
         s_funders = new address[](0);
         // payable(msg.sender).transfer(address(this).balance);
@@ -101,7 +101,7 @@ contract FundMe {
         view
         returns (uint256)
     {
-        return addressToAmountFunded[fundingAddress];
+        return s_addressToAmountFunded[fundingAddress];
     }
 
     function getVersion() public view returns (uint256) {
