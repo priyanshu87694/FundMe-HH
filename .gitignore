@@ -4,6 +4,7 @@ coverage
 coverage.json
 typechain
 .solhintignore
+deployments
 
 #Hardhat files
 cache
